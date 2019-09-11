@@ -88,7 +88,7 @@ func main() {
 		cli.StringSliceFlag{
 			Name:   "labels",
 			Usage:  "A key/value map of labels to add to the container",
-			EnvVar: "PLUGIN_LABELS",
+			EnvVar: "PLUGIN_LABELS,PLUGIN_LABELSX",
 		},
 		cli.StringSliceFlag{
 			Name:   "entry-point",
