@@ -11,9 +11,11 @@ import (
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/ecs"
+	"github.com/davecgh/go-spew/spew"
 )
 
 type Plugin struct {
+	PluginDebug             bool
 	Key                     string
 	Secret                  string
 	Region                  string
@@ -72,6 +74,9 @@ const (
 
 func (p *Plugin) Exec() error {
 	fmt.Println("Drone AWS ECS Plugin built")
+	if p.PluginDebug {
+		fmt.Println("Plugin configuration: ", spew.Sdump(p))
+	}
 	awsConfig := aws.Config{}
 
 	if len(p.Key) != 0 && len(p.Secret) != 0 {
@@ -197,7 +202,7 @@ func (p *Plugin) Exec() error {
 		}
 
 		pair := ecs.Ulimit{
-			Name: aws.String(name),
+			Name:      aws.String(name),
 			HardLimit: aws.Int64(hardLimit),
 			SoftLimit: aws.Int64(softLimit),
 		}
@@ -277,6 +282,10 @@ func (p *Plugin) Exec() error {
 		params.ExecutionRoleArn = aws.String(p.TaskExecutionRoleArn)
 	}
 
+	if p.PluginDebug {
+		fmt.Println("Request params:", spew.Sdump(params))
+	}
+
 	resp, err := svc.RegisterTaskDefinition(params)
 	if err != nil {
 		return err
@@ -332,9 +341,9 @@ func (p *Plugin) setupServiceNetworkConfiguration() *ecs.NetworkConfiguration {
 	if p.NetworkMode != ecs.NetworkModeAwsvpc {
 		return &netConfig
 	}
-	
+
 	if len(p.ServiceNetworkAssignPublicIp) != 0 {
-		netConfig.AwsvpcConfiguration.SetAssignPublicIp(p.ServiceNetworkAssignPublicIp);
+		netConfig.AwsvpcConfiguration.SetAssignPublicIp(p.ServiceNetworkAssignPublicIp)
 	}
 
 	if len(p.ServiceNetworkSubnets) > 0 {

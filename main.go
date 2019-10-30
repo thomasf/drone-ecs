@@ -20,6 +20,11 @@ func main() {
 	app.Action = run
 	app.Version = fmt.Sprintf("%s+%s", version, build)
 	app.Flags = []cli.Flag{
+		cli.BoolFlag{
+			Name:   "plugin-debug",
+			Usage:  "Log more things",
+			EnvVar: "PLUGIN_PLUGIN_DEBUG",
+		},
 		cli.StringFlag{
 			Name:   "access-key",
 			Usage:  "AWS access key",
@@ -219,6 +224,7 @@ func main() {
 
 func run(c *cli.Context) error {
 	plugin := Plugin{
+		PluginDebug:                  c.Bool("plugin-debug"),
 		Key:                          c.String("access-key"),
 		Secret:                       c.String("secret-key"),
 		Region:                       c.String("region"),
