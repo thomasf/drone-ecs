@@ -218,7 +218,7 @@ func (p *Plugin) Exec() error {
 
 	// EntryPoint
 	for _, v := range p.EntryPoint {
-		definition.EntryPoint = append(definition.EntryPoint, &v)
+		definition.EntryPoint = append(definition.EntryPoint, aws.String(v))
 	}
 
 	// LogOptions
